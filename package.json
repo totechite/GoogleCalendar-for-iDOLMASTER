@@ -13,6 +13,7 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^10.12.18",
     "axios": "^0.18.0",
+    "googleapis": "^27.0.0",
     "jsdom": "^13.1.0",
     "moment": "^2.23.0"
   }
