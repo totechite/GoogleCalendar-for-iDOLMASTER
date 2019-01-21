@@ -36,18 +36,20 @@ function main() {
                 let tmp = json.pop()
                 if (tmp != undefined) {
                     const nullCheck = (arg: string | null): string => {
-                        if (arg != (null | '')) {
+                        if (arg == '') {
+                            return 'null'
+                        } else if (arg != null){
                             return arg
                         } else {
                             return 'null'
                         }
                     }
-                    const t_time = nullCheck(time.textContent)
-                    const t_group = nullCheck(performance.innerHTML.match(/alt=\"(.+)\"/) != null ? performance.innerHTML.match(/alt=\"(.+)\"/)[1] : "null")
-                    const t_genre = nullCheck(genre.textContent)
-                    const t_title = nullCheck(article.textContent)
+                    const t_time = nullCheck(time!.textContent)
+                    const t_group = nullCheck(performance!.innerHTML.match(/alt=\"(.+)\"/) != null ? performance!.innerHTML.match(/alt=\"(.+)\"/)![1] : "null")
+                    const t_genre = nullCheck(genre!.textContent)
+                    const t_title = nullCheck(article!.textContent)
                     const urlreg = new RegExp(/href=\"(.+)\"(?=\s)/)
-                    const t_url = nullCheck(article.innerHTML.match(urlreg) != null ? article.innerHTML.match(urlreg)[1] : "null")
+                    const t_url = nullCheck(article!.innerHTML.match(urlreg) != null ? article!.innerHTML.match(urlreg)![1] : "null")
                     tmp.data.push({ startTime: t_time, group: t_group, evGenre: t_genre, evTitle: t_title, evURL: t_url })
                     const t_result = { day: tmp.day, week: tmp.week, data: tmp.data }
                     json.push(t_result)

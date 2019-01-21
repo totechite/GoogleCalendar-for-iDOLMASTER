@@ -10,9 +10,9 @@ function main() {
     // axios.get("https://idolmaster.jp/schedule/?ey=2019&em=01")
     //     .then((res) => { fs.writeFileSync("./imastable.html", res.data) }).catch(()=>{})
     // ========================================
-    var get_html = fs_1.default.readFileSync("./imastable.html", 'utf-8');
+    var get_html = fs_1.default.readFileSync('./imastable.html', 'utf-8');
     var dom = new jsdom_1.JSDOM(get_html);
-    var tr = dom.window.document.getElementsByTagName("tr");
+    var tr = dom.window.document.getElementsByTagName('tr');
     var day_count = 1;
     var json = [];
     for (var i = 3; tr.length - 1 > i; i++) {
@@ -20,15 +20,15 @@ function main() {
         if (row_1 == null) {
             break;
         }
-        var week = row_1.getElementsByClassName("week2");
-        var time = row_1.getElementsByClassName("time2").item(0);
+        var week = row_1.getElementsByClassName('week2');
+        var time = row_1.getElementsByClassName('time2').item(0);
         var performance_1 = row_1.getElementsByClassName("performance2").item(0);
-        var genre = row_1.getElementsByClassName("genre2").item(0);
-        var article = row_1.getElementsByClassName("article2").item(0);
+        var genre = row_1.getElementsByClassName('genre2').item(0);
+        var article = row_1.getElementsByClassName('article2').item(0);
         for (var o = 0; week.length >= o; o++) {
             var w = week.item(o);
             if (w != null) {
-                var wk = (w.textContent !== null) ? w.textContent : "null";
+                var wk = (w.textContent !== null) ? w.textContent : 'null';
                 var tmp = { day: day_count, week: wk, data: [] };
                 json.push(tmp);
                 day_count++;
@@ -37,11 +37,14 @@ function main() {
                 var tmp = json.pop();
                 if (tmp != undefined) {
                     var nullCheck = function (arg) {
-                        if (arg != (null | "")) {
+                        if (arg == '') {
+                            return 'null';
+                        }
+                        else if (arg != null) {
                             return arg;
                         }
                         else {
-                            return "null";
+                            return 'null';
                         }
                     };
                     var t_time = nullCheck(time.textContent);
@@ -60,6 +63,6 @@ function main() {
     }
     var row = tr.item(5);
     console.debug(json);
-    fs_1.default.writeFileSync("./producer_schedule.json", JSON.stringify(json));
+    fs_1.default.writeFileSync('./producer_schedule.json', JSON.stringify(json));
 }
 main();
