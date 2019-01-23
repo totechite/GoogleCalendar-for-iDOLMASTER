@@ -52,7 +52,7 @@ function main() {
                     const urlreg = new RegExp(/href=\"(.+)\"(?=\s)/)
                     const t_url = nullCheck(article!.innerHTML.match(urlreg) != null ? article!.innerHTML.match(urlreg)![1] : "null")
 
-                    const t_r = new RegExp(/\d{2}\:\d{2}/, "g")
+                    const t_r = new RegExp('/\d{2}\:\d{2}/', "g")
                     console.log(t_time.match(t_r))
                     var time_arr: RegExpMatchArray = []
                     if (t_time.match(t_r) != null) {
@@ -62,9 +62,17 @@ function main() {
                     }
                     const t_result = { day: tmp.day, week: tmp.week, data: tmp.data }
                     time_arr.forEach(t_time => {
-                        let t_time = t_title == 'null' ? 'null' : t_time
-                        tmp.data.push({ startTime: t_time, group: t_group, evGenre: t_genre, evTitle: t_title, evURL: t_url })
+                        let checked_time = t_title == 'null' ? 'null' : t_time
+                        if (t_group.split("、") != []) {
+                            t_group.split("、").forEach(group => {
+                                tmp!.data.push({ startTime: checked_time, group: group, evGenre: t_genre, evTitle: t_title, evURL: t_url })
+                            });
+                        } else {
+                            tmp!.data.push({ startTime: checked_time, group: t_group, evGenre: t_genre, evTitle: t_title, evURL: t_url })
+                        }
                     });
+
+
                     json.push(t_result)
 
                 }
