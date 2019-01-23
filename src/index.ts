@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { JSDOM } from 'jsdom'
+import moment from 'moment'
 import fs from 'fs'
 
 function main() {
@@ -38,26 +39,40 @@ function main() {
                     const nullCheck = (arg: string | null): string => {
                         if (arg == '') {
                             return 'null'
-                        } else if (arg != null){
+                        } else if (arg != null) {
                             return arg
                         } else {
                             return 'null'
                         }
                     }
-                    const t_time = nullCheck(time!.textContent)
+                    let t_time = nullCheck(time!.textContent)
                     const t_group = nullCheck(performance!.innerHTML.match(/alt=\"(.+)\"/) != null ? performance!.innerHTML.match(/alt=\"(.+)\"/)![1] : "null")
                     const t_genre = nullCheck(genre!.textContent)
                     const t_title = nullCheck(article!.textContent)
                     const urlreg = new RegExp(/href=\"(.+)\"(?=\s)/)
                     const t_url = nullCheck(article!.innerHTML.match(urlreg) != null ? article!.innerHTML.match(urlreg)![1] : "null")
-                    tmp.data.push({ startTime: t_time, group: t_group, evGenre: t_genre, evTitle: t_title, evURL: t_url })
+
+                    const t_r = new RegExp(/\d{2}\:\d{2}/, "g")
+                    console.log(t_time.match(t_r))
+                    var time_arr: RegExpMatchArray = []
+                    if (t_time.match(t_r) != null) {
+                        time_arr = t_time.match(t_r)!
+                    } else {
+                        time_arr = ['allday']
+                    }
                     const t_result = { day: tmp.day, week: tmp.week, data: tmp.data }
+                    time_arr.forEach(t_time => {
+                        let t_time = t_title == 'null' ? 'null' : t_time
+                        tmp.data.push({ startTime: t_time, group: t_group, evGenre: t_genre, evTitle: t_title, evURL: t_url })
+                    });
                     json.push(t_result)
+
                 }
-            };
+            }
 
         }
-    }
+    };
+
 
     const row = tr.item(5)
     console.debug(json)
