@@ -8,7 +8,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
 const TOKEN_PATH = 'token.json';
 
-async function main(): void {
+async function main() {
     console.log(moment('2019-01-01 00:00', 'YYYY-MM-DD HH:mm').format())
 
 
@@ -104,11 +104,11 @@ async function addEvents(auth: OAuth2Client) {
 
     const calendar = google.calendar({ version: 'v3', auth });
     const calendarIds = {
-        "765": "uv32on1tflbt3fi5brpem5sja8@group.calendar.google.com",
-        "CG": "2jtqfn3p803fl4mgeb2kpco2cs@group.calendar.google.com",
+        "765": "28vop157tq01tms0v83j61tmhk@group.calendar.google.com",
+        "CG": "uijipvnpvsj9qv8nc35ko4fto8@group.calendar.google.com",
         "ML": "95kg6p598lqg857retat31s2dk@group.calendar.google.com",
-        "SM": "1fdprh725au6aqnlslok9j2vqg@group.calendar.google.com",
-        "SC": "cn00hegu328707hcn9j3qjcqng@group.calendar.google.com",
+        "SM": "94k64095n0lu97eb27vbqav8v0@group.calendar.google.com",
+        "SC": "40j1q59vi33t5e4ptmnbq4qhl0@group.calendar.google.com",
     }
 
     const events: schedule_json[] = JSON.parse(fs.readFileSync("./producer_schedule.json").toString())
@@ -162,52 +162,6 @@ async function addEvents(auth: OAuth2Client) {
         await sleep(1000)
     }
 
-    // JSON.parse(fs.readFileSync("./producer_schedule.json").toString()).forEach((day: schedule_json) => {
-    //     day.data.forEach((data) => {
-    //         if (data.startTime == 'null') {
-    //         } else {
-    //             let start_dataTime = data.startTime == 'allday' ? { "date": moment().date(day.day).format("YYYY-MM-DD") } : { "dateTime": moment(data.startTime, 'HH:mm').date(day.day).format() }
-    //             start_dataTime["timeZone"] = "Japan"
-    //             let end_dataTime = data.startTime == 'allday' ? { "date": moment().date(day.day + 1).format("YYYY-MM-DD") } : { "dateTime": moment(data.startTime, 'HH:mm').date(day.day).add(1, 'hours').format() }
-    //             end_dataTime["timeZone"] = "Japan"
-    //             data.group.split("、 ").forEach( (group: string) => {
-    //                 let g: string|null = null;
-    //                 switch (group) {
-    //                     case "765":
-    //                         g = calendarIds["765"]
-    //                         break;
-    //                     case "シンデレラ":
-    //                         g = calendarIds["CG"]
-    //                         break;
-    //                     case "ミリオン":
-    //                         g = calendarIds["ML"]
-    //                         break;
-    //                     case "SideM":
-    //                         g = calendarIds["SM"]
-    //                         break;
-    //                     case "シャイニー":
-    //                         g = calendarIds["SC"]
-    //                         break;
-    //                 };
-    //                 let event = {
-    //                     'summary': data.evTitle,
-    //                     'location': data.evURL,
-    //                     'description': data.evGenre,
-    //                     'start': start_dataTime,
-    //                     'end': end_dataTime,
-    //                 }
-    //                 if (g != null) {
-    //                     calendar.events.insert({
-    //                         calendarId: g,
-    //                         resource: event
-    //                     });
-    //                 }
-    //                 sleep(2)
-                    
-    //             })
-    //         }
-    //     })
-    // })
 }
 
 main()
