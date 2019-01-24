@@ -76,11 +76,11 @@ async function sleep(t: number) {
 async function delete_events(auth: OAuth2Client) {
     const calendar = google.calendar({ version: 'v3', auth });
     const calendarIds = {
-        "765": "uv32on1tflbt3fi5brpem5sja8@group.calendar.google.com",
-        "CG": "2jtqfn3p803fl4mgeb2kpco2cs@group.calendar.google.com",
+        "765": "28vop157tq01tms0v83j61tmhk@group.calendar.google.com",
+        "CG": "uijipvnpvsj9qv8nc35ko4fto8@group.calendar.google.com",
         "ML": "95kg6p598lqg857retat31s2dk@group.calendar.google.com",
-        "SM": "1fdprh725au6aqnlslok9j2vqg@group.calendar.google.com",
-        "SC": "cn00hegu328707hcn9j3qjcqng@group.calendar.google.com",
+        "SM": "94k64095n0lu97eb27vbqav8v0@group.calendar.google.com",
+        "SC": "40j1q59vi33t5e4ptmnbq4qhl0@group.calendar.google.com",
     }
 
     const delete_event = (items: any, calendarId: string) => {
@@ -88,7 +88,7 @@ async function delete_events(auth: OAuth2Client) {
             const item = items[index];
             let id = item.id
             calendar.events.delete({ calendarId: calendarId, eventId: id })
-            
+
         }
     }
 
