@@ -67,7 +67,7 @@ function getAccessToken(oAuth2Client: OAuth2Client, callback: callbackType) {
     });
 }
 
-async function sleep(t:number) {
+async function sleep(t: number) {
     return await new Promise(r => {
         setTimeout(() => {
             r();
@@ -118,10 +118,8 @@ async function addEvents(auth: OAuth2Client) {
             let dat = data[index];
             if (dat.startTime == 'null') {
             } else {
-                let start_dataTime = dat.startTime == 'allday' ? { "date": moment().date(events[index_root].day).format("YYYY-MM-DD") } : { "dateTime": moment(dat.startTime, 'HH:mm').date(events[index_root].day).format() }
-                start_dataTime["timeZone"] = "Japan"
-                let end_dataTime = dat.startTime == 'allday' ? { "date": moment().date(events[index_root].day + 1).format("YYYY-MM-DD") } : { "dateTime": moment(dat.startTime, 'HH:mm').date(events[index_root].day).add(1, 'hours').format() }
-                end_dataTime["timeZone"] = "Japan"
+                let start_dataTime = dat.startTime == 'allday' ? { "date": moment().date(events[index_root].day).format("YYYY-MM-DD"), "timeZone": "Japan" } : { "dateTime": moment(dat.startTime, 'HH:mm').date(events[index_root].day).format(), "timeZone": "Japan" }
+                let end_dataTime = dat.startTime == 'allday' ? { "date": moment().date(events[index_root].day + 1).format("YYYY-MM-DD"), "timeZone": "Japan" } : { "dateTime": moment(dat.startTime, 'HH:mm').date(events[index_root].day).add(1, 'hours').format(), "timeZone": "Japan" }
                 dat.group.split("、 ").forEach((group: string) => {
                     let g: string | null = null;
                     switch (group) {
