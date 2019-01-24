@@ -4,29 +4,22 @@ import readline from 'readline'
 import { google } from 'googleapis'
 import { OAuth2Client } from 'google-auth-library';
 
-
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
+
 const TOKEN_PATH = 'token.json';
 
-function main(): void {
+async function main(): void {
     console.log(moment('2019-01-01 00:00', 'YYYY-MM-DD HH:mm').format())
-
-    // Client ID
-    // 608447596395-m42a9krrbn836077klg8c9f7kdb4eiqc.apps.googleusercontent.com
-    // Client Secret
-    // IQ_j9yvDH6OFYTc7sJ4-oBUF
 
 
     fs.readFile('./credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Calendar API.
-        authorize(JSON.parse(content), listEvents);
+        authorize(JSON.parse(content.toString()), addEvents);
     });
 
 }
+
 
 interface credentials {
     installed: {
@@ -64,7 +57,7 @@ function getAccessToken(oAuth2Client: OAuth2Client, callback: callbackType) {
         rl.close();
         oAuth2Client.getToken(code, (err, token) => {
             if (err) return console.error('Error retrieving access token', err);
-            oAuth2Client.setCredentials(token);
+            oAuth2Client.setCredentials(token!);
             fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
                 if (err) console.error(err);
                 console.log('Token stored to', TOKEN_PATH);
@@ -74,29 +67,147 @@ function getAccessToken(oAuth2Client: OAuth2Client, callback: callbackType) {
     });
 }
 
-function listEvents(auth: OAuth2Client): void {
-    const calendar = google.calendar({ version: 'v3', auth });
-    const event = {
-        'summary': 'Test',
-        'location': 'wired',
-        'description': 'hogehoge hugahuga',
-        'start': {
-            'dateTime': moment().format(),
-            'timeZone': 'Japan'
-        },
-        'end': {
-            'dateTime': moment('2019-01-23 00:00', 'YYYY-MM-DD HH:mm').format(),
-            'timeZone': 'Japan'
-        },
-        'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=2'
-        ],
-
-    }
-    calendar.events.insert({
-        calendarId: 'uv32on1tflbt3fi5brpem5sja8@group.calendar.google.com',
-        resource: event
+async function sleep(t:number) {
+    return await new Promise(r => {
+        setTimeout(() => {
+            r();
+        }, t);
     });
+}
+
+async function addEvents(auth: OAuth2Client) {
+
+    interface event {
+        summary: string
+        location: string
+        description: string
+        start: {
+            dataTime: string
+            timeZone: string
+        }
+        end: {
+            dataTime: string
+            timeZone: string
+        }
+    }
+    interface schedule_json {
+        day: number
+        week: string
+        data: {
+            startTime: string
+            group: string
+            evGenre: string
+            evTitle: string
+            evURL: string
+        }[]
+    }
+
+    const calendar = google.calendar({ version: 'v3', auth });
+    const calendarIds = {
+        "765": "uv32on1tflbt3fi5brpem5sja8@group.calendar.google.com",
+        "CG": "2jtqfn3p803fl4mgeb2kpco2cs@group.calendar.google.com",
+        "ML": "95kg6p598lqg857retat31s2dk@group.calendar.google.com",
+        "SM": "1fdprh725au6aqnlslok9j2vqg@group.calendar.google.com",
+        "SC": "cn00hegu328707hcn9j3qjcqng@group.calendar.google.com",
+    }
+
+    const events: schedule_json[] = JSON.parse(fs.readFileSync("./producer_schedule.json").toString())
+    for (let index_root = 0; index_root < events.length; index_root++) {
+        let data = events[index_root].data;
+        for (let index = 0; index < data.length; index++) {
+            let dat = data[index];
+            if (dat.startTime == 'null') {
+            } else {
+                let start_dataTime = dat.startTime == 'allday' ? { "date": moment().date(events[index_root].day).format("YYYY-MM-DD") } : { "dateTime": moment(dat.startTime, 'HH:mm').date(events[index_root].day).format() }
+                start_dataTime["timeZone"] = "Japan"
+                let end_dataTime = dat.startTime == 'allday' ? { "date": moment().date(events[index_root].day + 1).format("YYYY-MM-DD") } : { "dateTime": moment(dat.startTime, 'HH:mm').date(events[index_root].day).add(1, 'hours').format() }
+                end_dataTime["timeZone"] = "Japan"
+                dat.group.split("、 ").forEach((group: string) => {
+                    let g: string | null = null;
+                    switch (group) {
+                        case "765":
+                            g = calendarIds["765"]
+                            break;
+                        case "シンデレラ":
+                            g = calendarIds["CG"]
+                            break;
+                        case "ミリオン":
+                            g = calendarIds["ML"]
+                            break;
+                        case "SideM":
+                            g = calendarIds["SM"]
+                            break;
+                        case "シャイニー":
+                            g = calendarIds["SC"]
+                            break;
+                    };
+                    let event = {
+                        'summary': dat.evTitle,
+                        'location': dat.evURL,
+                        'description': dat.evGenre,
+                        'start': start_dataTime,
+                        'end': end_dataTime,
+                    }
+                    if (g != null) {
+                        calendar.events.insert({
+                            calendarId: g,
+                            resource: event
+                        });
+                    }
+
+                })
+            }
+
+        }
+        await sleep(1000)
+    }
+
+    // JSON.parse(fs.readFileSync("./producer_schedule.json").toString()).forEach((day: schedule_json) => {
+    //     day.data.forEach((data) => {
+    //         if (data.startTime == 'null') {
+    //         } else {
+    //             let start_dataTime = data.startTime == 'allday' ? { "date": moment().date(day.day).format("YYYY-MM-DD") } : { "dateTime": moment(data.startTime, 'HH:mm').date(day.day).format() }
+    //             start_dataTime["timeZone"] = "Japan"
+    //             let end_dataTime = data.startTime == 'allday' ? { "date": moment().date(day.day + 1).format("YYYY-MM-DD") } : { "dateTime": moment(data.startTime, 'HH:mm').date(day.day).add(1, 'hours').format() }
+    //             end_dataTime["timeZone"] = "Japan"
+    //             data.group.split("、 ").forEach( (group: string) => {
+    //                 let g: string|null = null;
+    //                 switch (group) {
+    //                     case "765":
+    //                         g = calendarIds["765"]
+    //                         break;
+    //                     case "シンデレラ":
+    //                         g = calendarIds["CG"]
+    //                         break;
+    //                     case "ミリオン":
+    //                         g = calendarIds["ML"]
+    //                         break;
+    //                     case "SideM":
+    //                         g = calendarIds["SM"]
+    //                         break;
+    //                     case "シャイニー":
+    //                         g = calendarIds["SC"]
+    //                         break;
+    //                 };
+    //                 let event = {
+    //                     'summary': data.evTitle,
+    //                     'location': data.evURL,
+    //                     'description': data.evGenre,
+    //                     'start': start_dataTime,
+    //                     'end': end_dataTime,
+    //                 }
+    //                 if (g != null) {
+    //                     calendar.events.insert({
+    //                         calendarId: g,
+    //                         resource: event
+    //                     });
+    //                 }
+    //                 sleep(2)
+                    
+    //             })
+    //         }
+    //     })
+    // })
 }
 
 main()

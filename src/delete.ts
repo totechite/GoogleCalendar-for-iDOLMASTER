@@ -65,6 +65,13 @@ function getAccessToken(oAuth2Client: OAuth2Client, callback: callbackType) {
         });
     });
 }
+async function sleep(t: number) {
+    return await new Promise(r => {
+        setTimeout(() => {
+            r();
+        }, t);
+    });
+}
 
 async function delete_events(auth: OAuth2Client) {
     const calendar = google.calendar({ version: 'v3', auth });
@@ -77,19 +84,26 @@ async function delete_events(auth: OAuth2Client) {
     }
 
     const delete_event = (items: any, calendarId: string) => {
-        items!.forEach((item: {id: string}) => {
+        for (let index = 0; index < items!.length; index++) {
+            const item = items[index];
             let id = item.id
-            calendar.events.delete({calendarId: calendarId, eventId: id})
-        });
+            calendar.events.delete({ calendarId: calendarId, eventId: id })
+            
+        }
     }
+
     const namco = await calendar.events.list({ calendarId: calendarIds['765'], alwaysIncludeEmail: false });
     delete_event(namco.data.items, calendarIds['765'])
+    await sleep(300)
     const CG = await calendar.events.list({ calendarId: calendarIds['CG'], alwaysIncludeEmail: false });
     delete_event(CG.data.items, calendarIds['CG'])
+    await sleep(300)
     const ML = await calendar.events.list({ calendarId: calendarIds['ML'], alwaysIncludeEmail: false });
     delete_event(ML.data.items, calendarIds['ML'])
+    await sleep(300)
     const SM = await calendar.events.list({ calendarId: calendarIds['SM'], alwaysIncludeEmail: false });
     delete_event(SM.data.items, calendarIds['SM'])
+    await sleep(300)
     const SC = await calendar.events.list({ calendarId: calendarIds['SC'], alwaysIncludeEmail: false });
     delete_event(SC.data.items, calendarIds['SC'])
 
