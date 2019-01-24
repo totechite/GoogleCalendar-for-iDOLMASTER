@@ -5,8 +5,8 @@ import fs from 'fs'
 
 function main() {
     // ============= Get .html ================
-    // axios.get("https://idolmaster.jp/schedule/?ey=2019&em=01")
-    //     .then((res) => { fs.writeFileSync("./imastable.html", res.data) }).catch(()=>{})
+    axios.get("https://idolmaster.jp/schedule/?ey=2019&em=01")
+        .then((res) => { fs.writeFileSync("./imastable.html", res.data) }).catch(()=>{})
     // ========================================
 
     const get_html: string = fs.readFileSync('./imastable.html', 'utf-8')
@@ -52,7 +52,7 @@ function main() {
                     const urlreg = new RegExp(/href=\"(.+)\"(?=\s)/)
                     const t_url = nullCheck(article!.innerHTML.match(urlreg) != null ? article!.innerHTML.match(urlreg)![1] : "null")
 
-                    const t_r = new RegExp('/\d{2}\:\d{2}/', "g")
+                    const t_r = new RegExp(/\d{2}\:\d{2}/, "g")
                     console.log(t_time.match(t_r))
                     var time_arr: RegExpMatchArray = []
                     if (t_time.match(t_r) != null) {
