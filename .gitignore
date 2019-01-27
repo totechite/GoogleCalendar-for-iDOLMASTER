@@ -1,5 +1,7 @@
 node_modules
 .vscode
-*.html
+/*.html
 *.json
-*.js
+src/*.js
+
+
