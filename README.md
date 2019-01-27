@@ -1,4 +1,7 @@
 # GoogleCalendar for THE iDOLM@STER
+
+![image picture](./docs/assets/img/imas.png)
+
 アイマスのイベント情報をGoogleCalendarでチェックできます。
 
 [プロデューサー予定表](https://idolmaster.jp/schedule/)の内容を反映しています。
