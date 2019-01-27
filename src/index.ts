@@ -4,8 +4,10 @@ import moment from 'moment'
 import fs from 'fs'
 
 function main() {
+    const month = moment().format("MM")
+    const link = "https://idolmaster.jp/schedule/?ey=2019&em="+month
     // ============= Get .html ================
-    axios.get("https://idolmaster.jp/schedule/?ey=2019&em=01")
+    axios.get(link)
         .then((res) => { fs.writeFileSync("./imastable.html", res.data) }).catch(()=>{})
     // ========================================
 
